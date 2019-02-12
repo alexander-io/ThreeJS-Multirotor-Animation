@@ -8,7 +8,9 @@
 var camera, scene, renderer;
 var geometry, material, mesh;
 
-var loader =  new THREE.OBJLoader()
+
+console.log(THREE)
+var loader =  new THREE.ObjectLoader()
 
 loader.load(
 	'models/quad.obj',
@@ -16,7 +18,7 @@ loader.load(
 		scene.add(object)
 	},
 	(xhr) => {
-		console.log((xhr.loaded / xhr.total * 100) + '% loaded') 
+		console.log((xhr.loaded / xhr.total * 100) + '% loaded')
 	}
 )
 
