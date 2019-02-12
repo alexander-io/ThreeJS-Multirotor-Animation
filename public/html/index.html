@@ -1,21 +1,26 @@
 <html>
 <head>
-<script src="/three.min.js"></script>
+<!-- <script src="/three.min.js"></script> -->
+
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js'></script>
+  <script src='https://threejs.org/examples/js/controls/TrackballControls.js'></script>
+  <script src='https://mamboleoo.be/learnThree/demos/OBJLoader.js'></script>
 </head>
 <body>
 </body>
 	<script>
 var camera, scene, renderer;
 var geometry, material, mesh;
+var quad;
 
-
-console.log(THREE)
-var loader =  new THREE.ObjectLoader()
-
+var loader =  new THREE.OBJLoader()
+//
 loader.load(
-	'models/quad.obj',
+	'/quad.obj',
 	(object) => {
 		scene.add(object)
+		quad =  object
 	},
 	(xhr) => {
 		console.log((xhr.loaded / xhr.total * 100) + '% loaded')
@@ -31,12 +36,12 @@ function init() {
     camera.position.z = 1;
 
     scene = new THREE.Scene();
+		scene.background = new THREE.Color( 0xff0000 );
 
     geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
     material = new THREE.MeshNormalMaterial();
 
     mesh = new THREE.Mesh( geometry, material );
-    scene.add( mesh );
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -48,8 +53,8 @@ function animate() {
 
     requestAnimationFrame( animate );
 
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.02;
+    quad.rotation.x += 0.01;
+    quad.rotation.y += 0.02;
 
     renderer.render( scene, camera );
 
