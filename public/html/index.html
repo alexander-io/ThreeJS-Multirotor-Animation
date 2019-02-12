@@ -1,7 +1,5 @@
 <html>
 <head>
-<!-- <script src="/three.min.js"></script> -->
-
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js'></script>
   <script src='https://threejs.org/examples/js/controls/TrackballControls.js'></script>
@@ -12,15 +10,22 @@
 	<script>
 var camera, scene, renderer;
 var geometry, material, mesh;
-var quad;
+var quad, orbit_radius = 3, date;
+var group
 
 var loader =  new THREE.OBJLoader()
+group = new THREE.Group()
+
 //
 loader.load(
 	'/quad.obj',
 	(object) => {
-		scene.add(object)
+		// scene.add(object)
 		quad =  object
+    quad.position.set(0,5,0)
+    group.add(quad)
+
+    quad.material.color.setHex( 0xce2949 );
 	},
 	(xhr) => {
 		console.log((xhr.loaded / xhr.total * 100) + '% loaded')
@@ -31,18 +36,23 @@ init();
 animate();
 
 function init() {
-
-    camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-    camera.position.z = 1;
+    camera = new THREE.PerspectiveCamera( 150, window.innerWidth / window.innerHeight, 0.01, 10 );
+    camera.position.z = 5;
 
     scene = new THREE.Scene();
-		scene.background = new THREE.Color( 0xff0000 );
+		scene.background = new THREE.Color( 0xffffff );
 
-    geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
+    geometry = new THREE.BoxGeometry( 0, 0, 0 );
     material = new THREE.MeshNormalMaterial();
-
+    material.transparent = true
+    material.opacity = 0
     mesh = new THREE.Mesh( geometry, material );
-
+    var light = new THREE.PointLight( 0xf0f0f0, 1, 100 );
+    light.position.set( 10, 0, 0 );
+    scene.add( light );
+    // scene.add(mesh)
+    group.add(mesh)
+    scene.add(group)
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
@@ -53,9 +63,18 @@ function animate() {
 
     requestAnimationFrame( animate );
 
-    quad.rotation.x += 0.01;
-    quad.rotation.y += 0.02;
-
+    date = Date.now() * 0.001
+    // quad.position.set(
+    //   Math.cos(date) * orbit_radius,
+    //   Math.cos(date) * orbit_radius,
+    //   Math.sin(date) * orbit_radius
+    // )
+    group.rotation.x = Math.cos(date) * orbit_radius
+    group.rotation.y = Math.sin(date) * orbit_radius
+    group.rotation.z = Math.sin(date) * orbit_radius
+    // quad.rotation.x = Math.cos(date) * orbit_radius;
+    // quad.rotation.y = Math.sin(date) * orbit_radius;
+    // quad.rotation.z = Math.sin(date) * orbit_radius
     renderer.render( scene, camera );
 
 }
