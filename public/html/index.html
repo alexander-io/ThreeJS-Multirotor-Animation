@@ -12,20 +12,16 @@ var camera, scene, renderer;
 var geometry, material, mesh;
 var quad, orbit_radius = 3, date;
 var group
-
+var box_geo, box_mat, box_mesh
 var loader =  new THREE.OBJLoader()
 group = new THREE.Group()
 
-//
 loader.load(
 	'/quad.obj',
 	(object) => {
-		// scene.add(object)
 		quad =  object
     quad.position.set(0,5,0)
     group.add(quad)
-
-    quad.material.color.setHex( 0xce2949 );
 	},
 	(xhr) => {
 		console.log((xhr.loaded / xhr.total * 100) + '% loaded')
@@ -36,12 +32,16 @@ init();
 animate();
 
 function init() {
-    camera = new THREE.PerspectiveCamera( 150, window.innerWidth / window.innerHeight, 0.01, 10 );
+    camera = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.01, 10 );
     camera.position.z = 5;
 
     scene = new THREE.Scene();
 		scene.background = new THREE.Color( 0xffffff );
 
+    box_geo = new THREE.BoxGeometry( 0, 0, 0 );
+    box_mat = new THREE.MeshNormalMaterial();
+    box_mesh = new THREE.Mesh(box_geo,box_mat)
+    box_mesh.position.z = 3
     geometry = new THREE.BoxGeometry( 0, 0, 0 );
     material = new THREE.MeshNormalMaterial();
     material.transparent = true
@@ -50,9 +50,9 @@ function init() {
     var light = new THREE.PointLight( 0xf0f0f0, 1, 100 );
     light.position.set( 10, 0, 0 );
     scene.add( light );
-    // scene.add(mesh)
     group.add(mesh)
     scene.add(group)
+    scene.add(box_mesh)
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
@@ -64,19 +64,12 @@ function animate() {
     requestAnimationFrame( animate );
 
     date = Date.now() * 0.001
-    // quad.position.set(
-    //   Math.cos(date) * orbit_radius,
-    //   Math.cos(date) * orbit_radius,
-    //   Math.sin(date) * orbit_radius
-    // )
     group.rotation.x = Math.cos(date) * orbit_radius
-    group.rotation.y = Math.sin(date) * orbit_radius
+    group.rotation.y = Math.sin(date) * (orbit_radius*2)
     group.rotation.z = Math.sin(date) * orbit_radius
-    // quad.rotation.x = Math.cos(date) * orbit_radius;
-    // quad.rotation.y = Math.sin(date) * orbit_radius;
-    // quad.rotation.z = Math.sin(date) * orbit_radius
     renderer.render( scene, camera );
-
+    box_mesh.rotation.y += 0.001
+    // camera.rotation.x = Math.cos(date)*2
 }
 	</script>
 </html>
